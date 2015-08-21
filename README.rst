@@ -1,8 +1,8 @@
 ovLinkCom
 =====
-Copyright (C) 2015 by Jorge C. Valverde-Rebaza
-Email: jvalverr@icmc.usp.br
-Site: http://www.labic.icmc.usp.br/jvalverr/
+Copyright (C) 2015 by `Jorge C. Valverde-Rebaza`_
+
+.. _Jorge C. Valverde-Rebaza: http://www.labic.icmc.usp.br/jvalverr/
 
 About
 =====
@@ -15,7 +15,13 @@ ovLinkCom is a software to calculate communities as groups of links rather than 
 Usage
 =====
 
-Should be self-explanatory, just run
+Should be self-explanatory. First you need get the binary file running::
+
+$ g++ -O5 -o ovLinkCom ovLinkCom.cpp
+
+After that, yo can use the binary for any network running::
+
+$ ./ovLinkCom networkFile threshold
 
 
 References
