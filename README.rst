@@ -19,10 +19,16 @@ Should be self-explanatory. First you need get the binary file running::
 
 $ g++ -O5 -o ovLinkCom ovLinkCom.cpp
 
-After that, yo can use the binary for any network running::
+After that, you can use the binary for any network, is just run::
 
 $ ./ovLinkCom networkFile threshold
 
+Where, ``networkFile`` is an integer links list (one link, two nodes separated by space, per line) and ``threshold`` is the [0,1] threshold for the clustering. 
+
+Output
+======
+
+Results are written to different files created automatically. The ``.clusters`` file will contain one cluster of links per line, where link nodes are comma-separated and links are space-separated. The ``.groups`` file will contain also one cluster of links per line, but showing just the nodes forming the links that belong to the cluster. The ``.stats`` file will contain information of each cluster per line, i.e. number of links and number of induced nodes. Finally, the ``.info`` file will contain general information about the overlapping community detection process.
 
 References
 ==========
