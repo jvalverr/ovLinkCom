@@ -27,7 +27,6 @@ have received a copy of the GNU General Public License along with LPsource. If n
 ------------------------------------------------
 */
 
-
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -39,11 +38,11 @@ have received a copy of the GNU General Public License along with LPsource. If n
 using namespace std;
 
 //global variables
-map< int, set<pair<int,int> > > index2cluster;
-map< pair<int,int>, map< int,set<pair<int,int> > >::iterator > edge2iter;
-vector<int>indexVector;
-vector<int>xVector;
-vector<int>yVector;
+map< unsigned int, set<pair<unsigned int,unsigned int> > > index2cluster;
+map< pair<unsigned int,unsigned int>, map< unsigned int,set<pair<unsigned int,unsigned int> > >::iterator > edge2iter;
+vector<unsigned int>indexVector;
+vector<unsigned int>xVector;
+vector<unsigned int>yVector;
 
 
 //methods
@@ -67,13 +66,12 @@ int main(int argc, char const *argv[]){
 }
 
 
-
-int intersection_size( const set<int> &A, const set<int> &B ) {
+int intersection_size( const set<unsigned int> &A, const set<unsigned int> &B ) {
     int num = 0;
-    set<int>::const_iterator As = A.begin();
-    set<int>::const_iterator Af = A.end();
-    set<int>::const_iterator Bs = B.begin();
-    set<int>::const_iterator Bf = B.end();
+    set<unsigned int>::const_iterator As = A.begin();
+    set<unsigned int>::const_iterator Af = A.end();
+    set<unsigned int>::const_iterator Bs = B.begin();
+    set<unsigned int>::const_iterator Bf = B.end();
 
     while ( As != Af && Bs != Bf ) {
         if ( *As < *Bs) {
@@ -89,8 +87,8 @@ int intersection_size( const set<int> &A, const set<int> &B ) {
     return num;
 }
 
-int findInVector(vector<int>listV, int key){
-    for(int i = 0; i < listV.size(); i++){
+int findInVector(vector<unsigned int>listV, unsigned int key){
+    for(unsigned int i = 0; i < listV.size(); i++){
         if(key == listV[i])
             return i;
     }
@@ -129,22 +127,25 @@ void readNetwork( const char* nameFile ){
     inFile.close();
 }
 
-set<int>* instanceClusters(){
-    int num_nodes = indexVector.size();
-    set<int> *neighbors = NULL;
-    neighbors = new set<int>[num_nodes];
+set<unsigned int>* instanceClusters(){
+    unsigned int num_nodes = indexVector.size();
+    set<unsigned int> *neighbors = NULL;
+    neighbors = new set<unsigned int>[num_nodes];
 
     int ni, nj, index = 0;
-    for(int i = 0; i < xVector.size(); i++){
+    for(unsigned int i = 0; i < xVector.size(); i++){
         neighbors[xVector[i]].insert(yVector[i]);
         neighbors[yVector[i]].insert(xVector[i]);
+
+        if( xVector[i] >= yVector[i] )
+            swap(xVector[i],yVector[i]);
 
         index2cluster[ index ].insert( make_pair(xVector[i], yVector[i]) ); // build cluster index to set of edge-pairs map
         edge2iter[ make_pair(xVector[i], yVector[i]) ] = index2cluster.find(index); // build edge pair to cluster iter map
         index++;
     }
 
-    for (int i=0; i < num_nodes; i++){
+    for (unsigned int i=0; i < num_nodes; i++){
         neighbors[i].insert(i); // neighbors[] is now INCLUSIVE!
     }
 
@@ -155,8 +156,8 @@ set<int>* instanceClusters(){
 
 void overlappingLinksClustering(int i0, int i1, int j0, int j1, double jacc, double threshold){
     int idx_i, idx_j;
-    map< int, set<pair<int,int> > >::iterator iter_i,iter_j;
-    set<pair<int,int> >::iterator iterS;
+    map< unsigned int, set<pair<unsigned int, unsigned int> > >::iterator iter_i,iter_j;
+    set<pair<unsigned int, unsigned int> >::iterator iterS;
 
     if ( jacc >= threshold ) {
         if (i0 >= i1)
@@ -186,20 +187,20 @@ void overlappingLinksClustering(int i0, int i1, int j0, int j1, double jacc, dou
 }
 
 void calculateJaccard(double threshold){
-    set<int>* neighbors = instanceClusters();
+    set<unsigned int>* neighbors = instanceClusters();
     int num_nodes = indexVector.size();
 
     int n_i, n_j, keystone, len_int;
     double curr_jacc;
 
     for (int keystone = 0; keystone < num_nodes; keystone++) {
-        for (set<int>::iterator i = neighbors[keystone].begin(); i != neighbors[keystone].end(); i++) {
+        for (set<unsigned int>::iterator i = neighbors[keystone].begin(); i != neighbors[keystone].end(); i++) {
             n_i = *i;
 
             if (n_i == keystone)
                 continue;
 
-            for (set<int>::iterator j = neighbors[keystone].begin(); j != neighbors[keystone].end(); j++ ) {
+            for (set<unsigned int>::iterator j = neighbors[keystone].begin(); j != neighbors[keystone].end(); j++ ) {
                 n_j = *j;
                 if (n_j == keystone or n_i >= n_j)
                     continue;
@@ -224,14 +225,14 @@ void calculateJaccard(double threshold){
 }
 
 void clusteringProcess(const char* nameFile, double threshold){
-    set<int> clusterNodes;
-    vector<int> groupVector;
+    set<unsigned int> clusterNodes;
+    vector<unsigned int> groupVector;
     int mc, nc;
     int M = 0, Mns = 0;
     double wSum = 0.0;
 
-    set< pair<int,int> >::iterator S;
-    map< int, set<pair<int,int> > >::iterator it;
+    set< pair<unsigned int, unsigned int> >::iterator S;
+    map< unsigned int, set<pair<unsigned int, unsigned int> > >::iterator it;
 
     char statsAux[500] = "";
     char clustersAux[500] = "";
